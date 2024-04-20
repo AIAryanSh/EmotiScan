@@ -52,11 +52,11 @@ class _HomeState extends State<Home> {
         threshold: 0.1,
         asynch: true,
       );
-      predictions!.forEach((element) {
+      if (predictions != null && predictions.isNotEmpty) {
         setState(() {
-          output = element['label'];
+          output = predictions[0]['label'];
         });
-      });
+      }
     }
   }
 
@@ -65,6 +65,12 @@ class _HomeState extends State<Home> {
       model: "assets/model_unquant.tflite",
       labels: "assets/labels.txt",
     );
+  }
+
+  @override
+  void dispose() {
+    cameraController?.dispose();
+    super.dispose();
   }
 
   @override
@@ -89,7 +95,7 @@ class _HomeState extends State<Home> {
             padding: EdgeInsets.all(15),
             child: Container(
               height: MediaQuery.of(context).size.height * 0.7,
-              width: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
               child: AspectRatio(
                 aspectRatio: cameraController!.value.aspectRatio,
                 child: CameraPreview(cameraController!),
@@ -100,19 +106,12 @@ class _HomeState extends State<Home> {
             output,
             style: TextStyle(
               fontSize: 35,
-              color: Colors.white,
+              color: const Color.fromARGB(255, 0, 0, 0),
               fontWeight: FontWeight.bold,
             ),
           ),
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    cameraController?.dispose();
-    Tflite.close();
-    super.dispose();
   }
 }
